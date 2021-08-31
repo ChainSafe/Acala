@@ -55,7 +55,9 @@ exclude = [
     "ecosystem-modules/pint/pallets/asset-index",
 	"ecosystem-modules/pint/pallets/committee",
 	"ecosystem-modules/pint/pallets/local-treasury",
+	"ecosystem-modules/pint/pallets/price-feed",
 	"ecosystem-modules/pint/pallets/saft-registry",
+	"ecosystem-modules/pint/primitives/primitives",
 ]
 
 resolver = "2"
