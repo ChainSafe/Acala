@@ -4941,19 +4941,23 @@ dependencies = [
  "orml-xcm",
  "orml-xcm-support",
  "orml-xtokens",
+ "pallet-asset-index",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",
  "pallet-bounties",
  "pallet-collective",
+ "pallet-committee",
  "pallet-democracy",
  "pallet-elections-phragmen",
  "pallet-indices",
+ "pallet-local-treasury",
  "pallet-membership",
  "pallet-multisig",
  "pallet-offences",
  "pallet-proxy",
  "pallet-recovery",
+ "pallet-saft-registry",
  "pallet-scheduler",
  "pallet-session",
  "pallet-sudo",
@@ -6707,6 +6711,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-asset-index"
+version = "0.0.1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "orml-traits",
+ "pallet-chainlink-feed",
+ "pallet-price-feed",
+ "parity-scale-codec",
+ "polkadot-parachain",
+ "primitives",
+ "serde",
+ "sp-core",
+ "xcm",
+ "xcm-executor",
+]
+
+[[package]]
 name = "pallet-asset-tx-payment"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.13#fcc54a72973d03afe7bf9e3ef2736050b3f33465"
@@ -6963,6 +6986,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-chainlink-feed"
+version = "0.1.0"
+source = "git+https://github.com/smartcontractkit/chainlink-polkadot?branch=polkadot-v0.9.8#124646ec14d25b9c6b5b3100c5422ebb53c804a0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "serde",
+ "sp-arithmetic",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-collective"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech//substrate?rev=fcc54a72973d03afe7bf9e3ef2736050b3f33465#fcc54a72973d03afe7bf9e3ef2736050b3f33465"
@@ -6977,6 +7016,16 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
+]
+
+[[package]]
+name = "pallet-committee"
+version = "0.0.1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
 ]
 
 [[package]]
@@ -7193,6 +7242,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-local-treasury"
+version = "0.0.1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+]
+
+[[package]]
 name = "pallet-lottery"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=polkadot-v0.9.13#fcc54a72973d03afe7bf9e3ef2736050b3f33465"
@@ -7343,6 +7402,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-price-feed"
+version = "0.0.1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-chainlink-feed",
+ "parity-scale-codec",
+ "primitives",
+ "serde",
+]
+
+[[package]]
 name = "pallet-proxy"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech//substrate?rev=fcc54a72973d03afe7bf9e3ef2736050b3f33465#fcc54a72973d03afe7bf9e3ef2736050b3f33465"
@@ -7383,6 +7455,19 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
+]
+
+[[package]]
+name = "pallet-saft-registry"
+version = "0.0.1"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-asset-index",
+ "parity-scale-codec",
+ "primitives",
+ "xcm",
 ]
 
 [[package]]
@@ -9169,6 +9254,17 @@ dependencies = [
  "impl-serde",
  "scale-info",
  "uint",
+]
+
+[[package]]
+name = "primitives"
+version = "0.0.1"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "serde",
+ "xcm",
 ]
 
 [[package]]

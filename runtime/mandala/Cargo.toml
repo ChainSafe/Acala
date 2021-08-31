@@ -127,6 +127,11 @@ ecosystem-renvm-bridge = { path = "../../ecosystem-modules/ren/renvm-bridge", de
 ecosystem-starport = { path = "../../ecosystem-modules/starport", default-features = false }
 ecosystem-compound-cash = { path = "../../ecosystem-modules/compound-cash", default-features = false }
 
+pint-committee = { path = "../../ecosystem-modules/pint/pallets/committee", package = "pallet-committee", default-features = false }
+pint-saft-registry = { path = "../../ecosystem-modules/pint/pallets/saft-registry", package = "pallet-saft-registry", default-features = false }
+pint-asset-index = { path = "../../ecosystem-modules/pint/pallets/asset-index", package = "pallet-asset-index", default-features = false }
+pint-local-treasury = { path = "../../ecosystem-modules/pint/pallets/local-treasury", package = "pallet-local-treasury", default-features = false }
+
 [build-dependencies]
 substrate-wasm-builder = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.13" }
 
@@ -257,6 +262,12 @@ std = [
 	"ecosystem-renvm-bridge/std",
 	"ecosystem-starport/std",
 	"ecosystem-compound-cash/std",
+	# "chainbridge/std",
+
+	"pint-committee/std",
+	"pint-saft-registry/std",
+	"pint-asset-index/std",
+	"pint-local-treasury/std",
 ]
 runtime-benchmarks = [
 	"orml-benchmarking",
@@ -278,6 +289,11 @@ runtime-benchmarks = [
 	"module-evm-accounts/runtime-benchmarks",
 
 	"sp-api/disable-logging",
+
+	"pint-committee/runtime-benchmarks",
+	"pint-saft-registry/runtime-benchmarks",
+	"pint-asset-index/runtime-benchmarks",
+	"pint-local-treasury/runtime-benchmarks",
 ]
 # When enabled, the runtime api will not be build.
 #

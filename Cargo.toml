@@ -51,6 +51,12 @@ members = [
 	# "ecosystem-modules/pint/pallets/local-treasury",
 	# "ecosystem-modules/pint/pallets/saft-registry",
 ]
+exclude = [
+    "ecosystem-modules/pint/pallets/asset-index",
+	"ecosystem-modules/pint/pallets/committee",
+	"ecosystem-modules/pint/pallets/local-treasury",
+	"ecosystem-modules/pint/pallets/saft-registry",
+]
 
 resolver = "2"
 
