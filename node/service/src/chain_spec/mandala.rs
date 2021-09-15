@@ -252,12 +252,13 @@ fn testnet_genesis(
 	evm_accounts: Vec<H160>,
 ) -> mandala_runtime::GenesisConfig {
 	use mandala_runtime::{
-		dollar, get_all_module_accounts, BalancesConfig, CdpEngineConfig, CdpTreasuryConfig, CollatorSelectionConfig,
-		DexConfig, EVMConfig, EnabledTradingPairs, FinancialCouncilMembershipConfig, GeneralCouncilMembershipConfig,
-		HomaCouncilMembershipConfig, IndicesConfig, NativeTokenExistentialDeposit, OperatorMembershipAcalaConfig,
-		OrmlNFTConfig, ParachainInfoConfig, PolkadotXcmConfig, RenVmBridgeConfig, SessionConfig, SessionDuration,
-		SessionKeys, SessionManagerConfig, StarportConfig, SudoConfig, SystemConfig,
-		TechnicalCommitteeMembershipConfig, TokensConfig, VestingConfig, ACA, AUSD, DOT, LDOT, RENBTC,
+		dollar, get_all_module_accounts, AirDropConfig, Balance, BalancesConfig, CdpEngineConfig, CdpTreasuryConfig,
+		CollatorSelectionConfig, DexConfig, EVMConfig, EnabledTradingPairs, FinancialCouncilMembershipConfig,
+		GeneralCouncilMembershipConfig, HomaCouncilMembershipConfig, IndicesConfig, NativeTokenExistentialDeposit,
+		OperatorMembershipAcalaConfig, OperatorMembershipBandConfig, OrmlNFTConfig, ParachainInfoConfig, Period,
+		PintCommitteeConfig, RenVmBridgeConfig, SessionConfig, SessionKeys, SessionManagerConfig, StakingPoolConfig,
+		StarportConfig, SudoConfig, SystemConfig, TechnicalCommitteeMembershipConfig, TokensConfig, VestingConfig, ACA,
+		AUSD, DOT, LDOT, RENBTC,
 	};
 
 	let existential_deposit = NativeTokenExistentialDeposit::get();
@@ -375,6 +376,16 @@ fn testnet_genesis(
 		},
 		evm: EVMConfig {
 			accounts: evm_genesis_accounts,
+			treasury: root_key.clone(),
+		},
+		staking_pool: StakingPoolConfig {
+			staking_pool_params: module_staking_pool::Params {
+				target_max_free_unbonded_ratio: FixedU128::saturating_from_rational(10, 100),
+				target_min_free_unbonded_ratio: FixedU128::saturating_from_rational(5, 100),
+				target_unbonding_to_free_ratio: FixedU128::saturating_from_rational(2, 100),
+				unbonding_to_free_adjustment: FixedU128::saturating_from_rational(1, 1000),
+				base_fee_rate: FixedU128::saturating_from_rational(2, 100),
+			},
 		},
 		dex: DexConfig {
 			initial_listing_trading_pairs: vec![],
@@ -428,9 +439,11 @@ fn testnet_genesis(
 		// of this.
 		aura: Default::default(),
 		aura_ext: Default::default(),
-		parachain_system: Default::default(),
-		polkadot_xcm: PolkadotXcmConfig {
-			safe_xcm_version: Some(2),
+
+		// pint configs
+		pint_committee: PintCommitteeConfig {
+			council_members: vec![root_key],
+			..Default::default()
 		},
 	}
 }
@@ -442,11 +455,12 @@ fn mandala_genesis(
 	endowed_accounts: Vec<AccountId>,
 ) -> mandala_runtime::GenesisConfig {
 	use mandala_runtime::{
-		cent, dollar, get_all_module_accounts, BalancesConfig, CdpEngineConfig, CdpTreasuryConfig,
-		CollatorSelectionConfig, DexConfig, EVMConfig, EnabledTradingPairs, FinancialCouncilMembershipConfig,
-		GeneralCouncilMembershipConfig, HomaCouncilMembershipConfig, IndicesConfig, NativeTokenExistentialDeposit,
-		OperatorMembershipAcalaConfig, OrmlNFTConfig, ParachainInfoConfig, PolkadotXcmConfig, RenVmBridgeConfig,
-		SessionConfig, SessionDuration, SessionKeys, SessionManagerConfig, StarportConfig, SudoConfig, SystemConfig,
+		cent, dollar, get_all_module_accounts, AirDropConfig, AirDropCurrencyId, Balance, BalancesConfig,
+		CdpEngineConfig, CdpTreasuryConfig, CollatorSelectionConfig, DexConfig, EVMConfig, EnabledTradingPairs,
+		FinancialCouncilMembershipConfig, GeneralCouncilMembershipConfig, HomaCouncilMembershipConfig, IndicesConfig,
+		NativeTokenExistentialDeposit, OperatorMembershipAcalaConfig, OperatorMembershipBandConfig, OrmlNFTConfig,
+		ParachainInfoConfig, Period, PintCommitteeConfig, RenVmBridgeConfig, SessionConfig, SessionKeys,
+		SessionManagerConfig, StakingPoolConfig, StarportConfig, SudoConfig, SystemConfig,
 		TechnicalCommitteeMembershipConfig, TokensConfig, VestingConfig, ACA, AUSD, DOT, LDOT, RENBTC,
 	};
 
@@ -562,6 +576,16 @@ fn mandala_genesis(
 		},
 		evm: EVMConfig {
 			accounts: evm_genesis_accounts,
+			treasury: root_key.clone(),
+		},
+		staking_pool: StakingPoolConfig {
+			staking_pool_params: module_staking_pool::Params {
+				target_max_free_unbonded_ratio: FixedU128::saturating_from_rational(10, 100),
+				target_min_free_unbonded_ratio: FixedU128::saturating_from_rational(5, 100),
+				target_unbonding_to_free_ratio: FixedU128::saturating_from_rational(2, 100),
+				unbonding_to_free_adjustment: FixedU128::saturating_from_rational(1, 1000),
+				base_fee_rate: FixedU128::saturating_from_rational(2, 100),
+			},
 		},
 		dex: DexConfig {
 			initial_listing_trading_pairs: vec![],
@@ -601,48 +625,11 @@ fn mandala_genesis(
 		aura: Default::default(),
 		aura_ext: Default::default(),
 		parachain_system: Default::default(),
-		polkadot_xcm: PolkadotXcmConfig {
-			safe_xcm_version: Some(2),
+
+		// pint configs
+		pint_committee: PintCommitteeConfig {
+			council_members: vec![root_key],
+			..Default::default()
 		},
 	}
-}
-
-/// Returns `evm_genesis_accounts`
-pub fn evm_genesis(evm_accounts: Vec<H160>) -> BTreeMap<H160, GenesisAccount<Balance, Nonce>> {
-	let contracts_json = &include_bytes!("../../../../predeploy-contracts/resources/bytecodes.json")[..];
-	let contracts: Vec<(String, String, String)> = serde_json::from_slice(contracts_json).unwrap();
-	let mut accounts = BTreeMap::new();
-	for (_, address, code_string) in contracts {
-		let account = GenesisAccount {
-			nonce: 0u32,
-			balance: 0u128,
-			storage: BTreeMap::new(),
-			code: if code_string.len().is_zero() {
-				vec![]
-			} else {
-				Bytes::from_str(&code_string).unwrap().0
-			},
-			enable_contract_development: false,
-		};
-
-		let addr = H160::from_slice(
-			from_hex(address.as_str())
-				.expect("predeploy-contracts must specify address")
-				.as_slice(),
-		);
-		accounts.insert(addr, account);
-	}
-
-	for dev_acc in evm_accounts {
-		let account = GenesisAccount {
-			nonce: 0u32,
-			balance: 1000 * mandala_runtime::dollar(mandala_runtime::ACA),
-			storage: BTreeMap::new(),
-			code: vec![],
-			enable_contract_development: true,
-		};
-		accounts.insert(dev_acc, account);
-	}
-
-	accounts
 }
